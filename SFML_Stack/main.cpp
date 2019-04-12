@@ -3,7 +3,7 @@
 #include "Game.h"
 
 #define SCREEN_WIDTH 640
-#define SCREEN_HEIGHT 900
+#define SCREEN_HEIGHT 960
 #define WINDOW_TITLE "Stack with linked list"
 
 int main()
