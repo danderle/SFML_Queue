@@ -23,6 +23,8 @@ private:
 	unsigned int windowHeight;
 
 	sf::RenderWindow *pWindow = nullptr;
+	sf::Font mFont;
+	sf::Text mText;
 	sf::Clock mClock;
 	Queue mQueue;
 };

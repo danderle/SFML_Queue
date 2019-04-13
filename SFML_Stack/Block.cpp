@@ -8,20 +8,20 @@ Block::~Block()
 
 Block::Block(const unsigned int colorShader)
 {
-	//Creates the rectangle
+	//Creates the rectangle and sets all settings
 	pRect = new sf::RectangleShape(sf::Vector2f(blockWidth, blockheight));
-	pRect->setPosition(WINDOW_WIDTH / 2 - blockWidth / 2, -blockheight / 2);
+	pRect->setPosition(WINDOW_WIDTH / 2 - blockWidth / 2, -blockheight);
 	pRect->setFillColor(sf::Color(0, colorShader, 0));
+	pRect->setOutlineColor(sf::Color::Blue);
+	pRect->setOutlineThickness(-5.0f);
 }
 
-void Block::Move()
+void Block::Move(const float elapsedTime)
 {
 	//Moves the block towards the bottom of the page
 	if (pRect->getPosition().y < WINDOW_HEIGHT)
 	{
-		float elapsedTime = mClock.getElapsedTime().asSeconds();
-		pRect->move(0, 160 * elapsedTime);
-		mClock.restart();
+		pRect->move(0, 200 * elapsedTime);
 	}
 }
 
@@ -30,7 +30,7 @@ void Block::Draw(sf::RenderWindow * pWindow) const
 	pWindow->draw(*pRect);
 }
 
-Block * Block::GetNext() const
+Block* Block::GetNext() const
 {
 	return pNext;
 }
@@ -51,4 +51,20 @@ const bool Block::IsEmpty() const
 const float Block::GetPosition() const
 {
 	return pRect->getPosition().y;
+}
+
+sf::RectangleShape * Block::GetRect() const
+{
+	return pRect;
+}
+
+const bool Block::OnWayOut() const
+{
+	return mOnWayOut;
+}
+
+void Block::ToBeDeleted()
+{
+	mOnWayOut = true;
+	pRect->setFillColor(sf::Color::Red);
 }
