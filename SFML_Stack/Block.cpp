@@ -6,37 +6,22 @@ Block::~Block()
 	pRect = nullptr;
 }
 
-void Block::CreateBlock(const unsigned int windowWidth, const unsigned int windowHeight)
+Block::Block(const unsigned int colorShader)
 {
-	//Sets the window size
-	this->windowWidth = windowWidth;
-	this->windowHeight = windowHeight;
-
 	//Creates the rectangle
 	pRect = new sf::RectangleShape(sf::Vector2f(blockWidth, blockheight));
-	pRect->setPosition(windowWidth / 2 - blockWidth / 2, -blockheight / 2);
+	pRect->setPosition(WINDOW_WIDTH / 2 - blockWidth / 2, -blockheight / 2);
 	pRect->setFillColor(sf::Color(0, colorShader, 0));
-	colorShader += 40;
-	if (colorShader > 255)
-		colorShader = 0;
-	//Restarts clock so so every new rect starts at the top
-	mClock.restart();
 }
 
 void Block::Move()
 {
 	//Moves the block towards the bottom of the page
-	if (pRect->getPosition().y < windowHeight)
+	if (pRect->getPosition().y < WINDOW_HEIGHT)
 	{
 		float elapsedTime = mClock.getElapsedTime().asSeconds();
 		pRect->move(0, 160 * elapsedTime);
 		mClock.restart();
-	}
-	//if the block is outside window it gets deleted
-	else if (pRect->getPosition().y > windowHeight)
-	{
-		delete pRect;
-		pRect = nullptr;
 	}
 }
 
@@ -45,7 +30,25 @@ void Block::Draw(sf::RenderWindow * pWindow) const
 	pWindow->draw(*pRect);
 }
 
+Block * Block::GetNext() const
+{
+	return pNext;
+}
+
+void Block::AddToEnd(const unsigned int colorShader)
+{
+	if (pNext == nullptr)
+		pNext = new Block(colorShader);
+	else
+		pNext->AddToEnd(colorShader);
+}
+
 const bool Block::IsEmpty() const
 {
 	return pRect == nullptr;
+}
+
+const float Block::GetPosition() const
+{
+	return pRect->getPosition().y;
 }

@@ -27,17 +27,19 @@ void Game::Loop()
 				if (event.key.code == sf::Keyboard::Key::Enter)
 				{
 					//Creates a block and sets it to the top of the window
-					mBlock.CreateBlock(windowWidth, windowHeight);
+					mQueue.PushBlock();
 				}
 				break;
 			}
 		}
-
+		
 		pWindow->clear();
-		if (!mBlock.IsEmpty())
+		if (!mQueue.IsEmpty())
 		{
-			mBlock.Draw(pWindow);
-			mBlock.Move();
+			mQueue.DrawAll(pWindow);
+			mQueue.MoveAll();
+			if (mQueue.HeadOffWindow())
+				mQueue.CutHead();
 		}
 		pWindow->display();
 	}

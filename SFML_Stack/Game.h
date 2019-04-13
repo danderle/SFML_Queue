@@ -1,6 +1,7 @@
 #pragma once
 #include <SFML/Graphics.hpp>
 #include "Block.h"
+#include "Queue.h"
 
 //Game class handles the game loop and game related objects
 class Game
@@ -22,7 +23,7 @@ private:
 	unsigned int windowHeight;
 
 	sf::RenderWindow *pWindow = nullptr;
-
-	Block mBlock;
+	sf::Clock mClock;
+	Queue mQueue;
 };
 
