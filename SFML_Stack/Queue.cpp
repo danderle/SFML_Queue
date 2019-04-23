@@ -1,21 +1,28 @@
 #include "Queue.h"
 
-void Queue::PushBlock()
+void Queue::PushBlock(const float viewHeight)
 {
 	if (IsEmpty())
-		head = new Block(colorShader);
+		head = new Block(mBlockColor, viewHeight);
 	else
 	{
-		head->AddToEnd(colorShader);
+		head->AddToEnd(mBlockColor, viewHeight);
 	}
-	colorShader += 40;
-	if (colorShader > 255)
-		colorShader = 40;
+	mBlockColor += 40;
+	if (mBlockColor > 255)
+		mBlockColor = 40;
 }
 
 const bool Queue::IsEmpty() const
 {
 	return head == nullptr;
+}
+
+const int Queue::Size() const
+{
+	if (head == nullptr)
+		return 0;
+	return head->Count();
 }
 
 void Queue::DrawAll(sf::RenderWindow *pWindow) const
@@ -35,7 +42,6 @@ void Queue::MoveAll(const float elapsedTime)
 	{
 		head->Move(elapsedTime);
 	}
-
 
 	Block *prev = head;
 	Block *next = head->GetNext();
@@ -62,7 +68,7 @@ void Queue::CutHead()
 }
 
 //Checks if the last block is completely in the window
-const bool Queue::TailInWindow() const
+const bool Queue::TailInView(const float viewHeight) const
 {
 	if (IsEmpty())
 		return true;
@@ -71,7 +77,7 @@ const bool Queue::TailInWindow() const
 	{
 		tmp = tmp->GetNext();
 	}
-	return tmp->GetPosition() > 0;
+	return tmp->GetPosition() > (WINDOW_HEIGHT - viewHeight);
 }
 
 //checks if head is off window
@@ -92,4 +98,9 @@ void Queue::Remove()
 		tmp = tmp->GetNext();
 	}
 	tmp->ToBeDeleted();
+}
+
+const int Queue::GetHeight() const
+{
+	return head->GetRect()->getGlobalBounds().height * head->Count();
 }

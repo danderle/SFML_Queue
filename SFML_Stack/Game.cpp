@@ -2,12 +2,15 @@
 #include <iostream>
 
 Game::Game(const unsigned int window_width, const unsigned int window_height, const std::string & window_title)
-	:
-	windowWidth(window_width),
-	windowHeight(window_height)
 {
+	//TESTING CODE YELLOW FRAME
+	frame.setSize(sf::Vector2f(window_width, window_height));
+	frame.setFillColor(sf::Color::Transparent);
+	frame.setOutlineColor(sf::Color::Yellow);
+	frame.setOutlineThickness(-10.0f);
+
 	//Creates the game window
-	pWindow = new sf::RenderWindow(sf::VideoMode(windowWidth, windowHeight), window_title);
+	pWindow = new sf::RenderWindow(sf::VideoMode(window_width, window_height), window_title);
 	if (!mFont.loadFromFile(FONT_FILEPATH))
 	{
 		std::cout << "failed to load the fonts" << std::endl;
@@ -19,7 +22,6 @@ Game::Game(const unsigned int window_width, const unsigned int window_height, co
 	mText.setOutlineColor(sf::Color::Yellow);
 	mText.setOutlineThickness(6);
 	mText.setString("Press \"Enter\" to make a Queue");
-	
 }
 
 void Game::Loop()
@@ -37,16 +39,36 @@ void Game::Loop()
 				pWindow->close();
 				break;
 			case sf::Event::KeyReleased:
+				//TESTING CODE PRESS T
+				if (event.key.code == sf::Keyboard::Key::T)
+				{
+					mView.zoom(1.5f);
+					float centerY = WINDOW_HEIGHT - mView.getSize().y/2.0f;
+					mView.setCenter(WINDOW_WIDTH / 2, centerY);
+					pWindow->setView(mView);
+					mText.setPosition(WINDOW_WIDTH/2 - mView.getSize().x, WINDOW_HEIGHT - mView.getSize().y);
+				}
 				if (event.key.code == sf::Keyboard::Key::Enter)
 				{
+					float currentViewHeight = mView.getSize().y;
 					//Checks if last created block is inside window so no new block overlaps
-					if (mQueue.TailInWindow())
+					if (mQueue.TailInView(currentViewHeight))
 					{
 						//Creates a block and sets it to the top of the window
-						mQueue.PushBlock();
+						mQueue.PushBlock(currentViewHeight);
 						mClock.restart();
+						mView = pWindow->getView();
+						if (mQueue.GetHeight() > (currentViewHeight * 2.0f / 3.0f))
+						{
+							//Zooms the view and sets the bottom of new and original frame on top of each other
+							mView.zoom(1.5f);
+							float centerY = WINDOW_HEIGHT - mView.getSize().y / 2.0f;
+							mView.setCenter(WINDOW_WIDTH / 2, centerY);
+							pWindow->setView(mView);
+						}
 					}
 				}
+				//Delete Blocks
 				else if (event.key.code == sf::Keyboard::Key::Delete)
 				{
 					if (!mQueue.IsEmpty())
@@ -68,6 +90,7 @@ void Game::Loop()
 		//If queue is empty skip drawing it
 		if (!mQueue.IsEmpty())
 		{
+			
 			//Draws the blocks and then moves them
 			mQueue.DrawAll(pWindow);
 			mQueue.MoveAll(elapsedTime);
@@ -76,6 +99,7 @@ void Game::Loop()
 				mQueue.CutHead();
 		}
 		pWindow->draw(mText);
+		pWindow->draw(frame);
 		pWindow->display();
 		
 	}

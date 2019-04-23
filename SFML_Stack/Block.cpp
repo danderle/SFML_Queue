@@ -6,12 +6,12 @@ Block::~Block()
 	pRect = nullptr;
 }
 
-Block::Block(const unsigned int colorShader)
+Block::Block(const unsigned int blockColor, const float viewHeight)
 {
 	//Creates the rectangle and sets all settings
-	pRect = new sf::RectangleShape(sf::Vector2f(blockWidth, blockheight));
-	pRect->setPosition(WINDOW_WIDTH / 2 - blockWidth / 2, -blockheight);
-	pRect->setFillColor(sf::Color(0, colorShader, 0));
+	pRect = new sf::RectangleShape(sf::Vector2f(mBlockWidth, mBlockheight));
+	pRect->setPosition(WINDOW_WIDTH / 2 - mBlockWidth / 2, (WINDOW_HEIGHT - viewHeight) -mBlockheight);
+	pRect->setFillColor(sf::Color(0, blockColor, 0));
 	pRect->setOutlineColor(sf::Color::Blue);
 	pRect->setOutlineThickness(-5.0f);
 }
@@ -19,10 +19,7 @@ Block::Block(const unsigned int colorShader)
 void Block::Move(const float elapsedTime)
 {
 	//Moves the block towards the bottom of the page
-	if (pRect->getPosition().y < WINDOW_HEIGHT)
-	{
-		pRect->move(0, 200 * elapsedTime);
-	}
+	pRect->move(0, mBlockSpeed * elapsedTime);
 }
 
 void Block::Draw(sf::RenderWindow * pWindow) const
@@ -35,17 +32,22 @@ Block* Block::GetNext() const
 	return pNext;
 }
 
-void Block::AddToEnd(const unsigned int colorShader)
+void Block::AddToEnd(const unsigned int blockColor, const float viewHeight)
 {
 	if (pNext == nullptr)
-		pNext = new Block(colorShader);
+		pNext = new Block(blockColor, viewHeight);
 	else
-		pNext->AddToEnd(colorShader);
+		pNext->AddToEnd(blockColor, viewHeight);
 }
 
 const bool Block::IsEmpty() const
 {
 	return pRect == nullptr;
+}
+
+int Block::Count() const
+{
+	return pNext == nullptr ? 1 : 1 + pNext->Count();
 }
 
 const float Block::GetPosition() const

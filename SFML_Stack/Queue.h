@@ -6,16 +6,18 @@ public:
 	Queue() = default;
 	~Queue() = default;
 
-	void PushBlock();
+	void PushBlock(const float viewHeight);
 	const bool IsEmpty() const;
+	const int Size() const;
 	void DrawAll(sf::RenderWindow *pWindow) const;
 	void MoveAll(const float elapsedTime);
 	void CutHead();
-	const bool TailInWindow() const;
+	const bool TailInView(const float viewHeight) const;
 	const bool HeadOffWindow() const;
 	void Remove();
+	const int GetHeight() const;
 private:
 	Block *head = nullptr;
-	int colorShader = 40;
+	int mBlockColor = 40;
 };
 

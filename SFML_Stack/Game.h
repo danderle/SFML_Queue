@@ -19,13 +19,12 @@ public:
 	
 
 private:
-	unsigned int windowWidth;
-	unsigned int windowHeight;
-
 	sf::RenderWindow *pWindow = nullptr;
 	sf::Font mFont;
 	sf::Text mText;
 	sf::Clock mClock;
+	sf::View mView;
+	sf::RectangleShape frame;
 	Queue mQueue;
 };
 
